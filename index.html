@@ -595,7 +595,8 @@ body.phone-land .toolbar .seg button{padding:4px 8px}
 body.phone-land .toolbar .btn{padding-block:5px}
 body.phone-land .toolbar .btn{justify-content:center;width:100%;box-sizing:border-box}
 body.phone-land .toolbar .cl{display:none}
-body.phone-land.kb-tap .kb{margin-inline:0 calc(-1 * (var(--sr) + 58px));padding-inline:0 var(--sr)}
+body.phone-land.kb-tap .kb{margin-inline:calc(-1 * (var(--sl) + 112px)) calc(-1 * (var(--sr) + 58px));padding-inline:var(--sl) var(--sr)}
+body.phone-land.kb-tap.kb-narrow .kb{margin-left:0;padding-left:0}
 body.phone-land.kb-tap .row.num .key{height:8.5vh;min-height:30px}
 body.phone-land .ja{font-size:calc(clamp(18px,5.6vh,26px) * var(--scale) / 1.25 * 1.2)}
 body.phone-land .hint,body.phone-land .no{font-size:14px}
@@ -1126,7 +1127,7 @@ function applyDevice(){
     ? "外付けキーボードで入力されたので、PCと同じ設定に切り替えました。"
     : opts.kb === "auto" ? "キーボードの「自動」は、PCではABCとフォニックスだけ見本を表示し、タブレットとスマホではタップで入力します。" : "";
   if (!st.started && !st.done && !els.hint.classList.contains("warn")) els.hint.textContent = hintText();
-  updateKeyHint(); renderShift(); drawRules();
+  updateKeyHint(); renderShift(); drawRules(); requestAnimationFrame(fitKb);
 }
 function renderShift(){
   const tap = effKb() === "tap";
@@ -1197,7 +1198,15 @@ function keysFor(ch){
   }
   return [ch.toLowerCase()];
 }
+function fitKb(){
+  const b = document.body;
+  b.classList.remove("kb-narrow");
+  if (!b.classList.contains("phone-land") || !b.classList.contains("kb-tap")) return;
+  const tb = document.querySelector(".toolbar"), kb = els.kb;
+  if (tb && kb && kb.getBoundingClientRect().top < tb.getBoundingClientRect().bottom + 2) b.classList.add("kb-narrow");
+}
 function updateKeyHint(){
+  requestAnimationFrame(fitKb);
   { const cur = st.queue && st.queue[st.qi]; els.kb.classList.toggle("withnum", !!(cur && !st.done && /\d/.test(cur.en))); }
   Object.values(keyEls).forEach(el => el.classList.remove("next"));
   const sh = $("shifthint");
