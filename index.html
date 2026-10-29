@@ -582,6 +582,17 @@ body.phone-land.kb-tap .key{height:10vh;min-height:34px}
 body.phone-land.kb-tap .row.sp .key{height:8.5vh;min-height:30px}
 body.phone-land.kb-tap .kb{gap:3px;padding-block:3px}
 body.phone-land .logo,body.phone-land h1{display:none}
+body.phone-land{--sl:max(8px,env(safe-area-inset-left,0px));--sr:max(8px,env(safe-area-inset-right,0px))}
+body.phone-land .wrap{max-width:none;padding-left:calc(var(--sl) + 112px);padding-right:calc(var(--sr) + 58px)}
+body.phone-land header{position:static}
+body.phone-land .panels{position:fixed;top:6px;right:var(--sr);flex-direction:column;align-items:stretch;gap:6px;margin:0;z-index:40}
+body.phone-land .panels .s-body{position:fixed;top:6px;right:calc(var(--sr) + 62px);width:min(440px,calc(100vw - var(--sr) - var(--sl) - 140px));max-height:calc(100vh - 12px);max-height:calc(100dvh - 12px);overflow-y:auto}
+body.phone-land .toolbar{position:fixed;top:6px;left:var(--sl);width:100px;flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:6px;z-index:20}
+body.phone-land .toolbar .seg{flex-direction:column;border-radius:16px;width:100%;box-sizing:border-box}
+body.phone-land .toolbar .seg button{padding:6px 8px}
+body.phone-land .toolbar .btn{justify-content:center;width:100%;box-sizing:border-box}
+body.phone-land .toolbar .cl{display:none}
+body.phone-land.kb-tap .kb{margin-inline:calc(-1 * (var(--sl) + 112px)) calc(-1 * (var(--sr) + 58px));padding-inline:var(--sl) var(--sr)}
 body.phone-land .ja{font-size:calc(clamp(18px,5.6vh,26px) * var(--scale) / 1.25 * 1.2)}
 body.phone-land .hint,body.phone-land .no{font-size:14px}
 body.phone-land .stat .v{font-size:20px}
