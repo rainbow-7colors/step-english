@@ -598,7 +598,12 @@ body.phone-land .toolbar .btn{padding-block:5px}
 body.phone-land .toolbar .btn{justify-content:center;width:100%;box-sizing:border-box}
 body.phone-land .toolbar .cl{display:none}
 body.phone-land.kb-tap .kb{margin-inline:calc(-1 * (var(--sl) + 112px)) calc(-1 * (var(--sr) + 58px));padding-inline:var(--sl) var(--sr)}
-body.phone-land.kb-tap.kb-narrow .kb{margin-left:0;padding-left:0}
+body.phone-land.kb-tap .kb{z-index:25}
+body.phone-land.kb-narrow .grade{height:26px;font-size:11px;top:3px}
+body.phone-land.kb-narrow .toolbar{top:32px;gap:3px}
+body.phone-land.kb-narrow .toolbar .seg{padding:2px}
+body.phone-land.kb-narrow .toolbar .seg button{padding:1px 8px;font-size:12px}
+body.phone-land.kb-narrow .toolbar .btn{padding-block:2px;font-size:12px}
 body.phone-land.kb-tap .row.num .key{height:8.5vh;min-height:30px}
 body.phone-land .ja{font-size:calc(clamp(18px,5.6vh,26px) * var(--scale) / 1.25 * 1.2)}
 body.phone-land .hint,body.phone-land .no{font-size:14px}
