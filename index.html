@@ -216,6 +216,27 @@ button:focus-visible,.opt input:focus-visible{outline:2px solid var(--accent);ou
 .badge{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .badge.off{border-color:var(--line);color:var(--muted);background:none;opacity:.7}
 .stars-total{margin-left:auto;font-size:13px;font-weight:700;color:var(--accent)}
+.start{position:fixed;inset:0;z-index:60;overflow:auto;background:var(--desk);color:var(--ink);display:grid;place-items:center;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));animation:ppfade .25s ease-out}
+.start-card{width:min(720px,100%);display:grid;justify-items:center;gap:14px;margin:auto}
+.start-card .owl{width:110px;height:110px}
+.start-card h2{margin:0;font-size:clamp(20px,3.4vw,28px);font-family:var(--f-ui);text-align:center}
+.start-card .st-sub{margin:-6px 0 0;font-size:13px;color:var(--muted);text-align:center}
+.st-resume{width:min(480px,100%);display:grid;gap:2px;text-align:left;padding:14px 20px;border-radius:18px;border:2px solid var(--accent);background:var(--paper);color:var(--ink);font:inherit;cursor:pointer;box-shadow:var(--shadow)}
+.st-resume .k{font-weight:800;font-size:17px;color:var(--accent)}
+.st-resume .v{font-weight:700;font-size:16px}
+.st-resume .d{font-size:12px;color:var(--muted)}
+.st-resume:focus-visible,.st-lv:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.st-grp{width:100%}
+.st-gh{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--muted)}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.st-lv{display:grid;gap:1px;justify-items:center;padding:10px 6px;border-radius:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:inherit;cursor:pointer}
+.st-lv .t{font-size:11px;color:var(--muted)}
+.st-lv .n{font-weight:800;font-size:14px}
+.st-lv.last{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+.st-lv:hover{border-color:var(--accent)}
+.st-head{display:flex;align-items:center;justify-content:center;gap:14px}
+.st-head .owl{flex:none}
+@media (max-height:640px){.start-card .owl{width:64px;height:64px}.start-card{gap:10px}.start-card h2{font-size:20px}}
 .praise-pop{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--ink) 38%,transparent);cursor:pointer;animation:ppfade .25s ease-out}
 .praise-card{display:grid;justify-items:center;gap:0;max-width:min(560px,100%);cursor:default}
 .praise-card .owl{width:min(230px,38vh);height:min(230px,38vh);animation:pphop .7s ease-out}
@@ -315,11 +336,15 @@ button:focus-visible,.opt input:focus-visible{outline:2px solid var(--accent);ou
 .kb{display:grid;gap:5px;font-family:var(--f-num);font-size:clamp(10px,1.5vw,13px);user-select:none}
 .row{display:flex;gap:5px}
 .row:nth-child(2){padding-left:3.5%}
-.row:nth-child(3){padding-left:5.5%}
-.row:nth-child(4){padding-left:0}
+.row:nth-child(3){padding-left:0}
+.row.sp .key:not(.space){flex:none;width:9%}
+.kb .row.num{display:none;order:-1;padding-inline:3%}
+.kb.withnum .row.num{display:flex}
+.key .m{font-size:1.3em;font-weight:700}
+.key .up{display:none}
 .key{flex:1 1 0;min-width:0;height:2.9em;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;background:var(--key);color:var(--muted);position:relative}
 .key .up{font-size:.8em;opacity:.7}
-.key.wide{flex:1.8 1 0}
+.key.wide{flex:1.8 1 0;font-size:.95em}
 .key.space{flex:none;width:44%;margin:0 auto}
 .row.sp{justify-content:center}
 .key.home::after{content:"";position:absolute;bottom:.45em;width:.9em;height:2px;border-radius:1px;background:currentColor;opacity:.6}
@@ -551,6 +576,16 @@ body.kb-tap .key.on{background:var(--ink);border-color:var(--ink);color:var(--pa
   body:not(.kb-tap) .coach,body:not(.kb-tap) .stats{display:none}
   body:not(.kb-tap) .key{height:1.9em}
 }
+body.notime .stat:nth-child(-n+2){display:none}
+body.phone-land.kb-tap .kb{font-size:calc(clamp(13px,4.4vh,20px) * var(--scale) / 1.25)}
+body.phone-land.kb-tap .key{height:10vh;min-height:34px}
+body.phone-land.kb-tap .row.sp .key{height:8.5vh;min-height:30px}
+body.phone-land.kb-tap .kb{gap:3px;padding-block:3px}
+body.phone-land .logo,body.phone-land h1{display:none}
+body.phone-land .ja{font-size:calc(clamp(18px,5.6vh,26px) * var(--scale) / 1.25 * 1.2)}
+body.phone-land .hint,body.phone-land .no{font-size:14px}
+body.phone-land .stat .v{font-size:20px}
+body.phone-land .stat .label{font-size:12px}
 @media (max-width:420px){
   .compact .toolbar{flex-wrap:wrap;gap:8px}
   .compact .toolbar .seg button{padding:4px 11px}
@@ -622,6 +657,7 @@ body.kb-tap .key.on{background:var(--ink);border-color:var(--ink);color:var(--pa
           <label class="opt"><input type="checkbox" id="opt-sound" checked> 読み上げ</label>
           <label class="opt"><input type="checkbox" id="opt-pic" checked> 絵を表示</label>
           <label class="opt"><input type="checkbox" id="opt-strict"> 大文字を区別</label>
+          <label class="opt"><input type="checkbox" id="opt-timing" checked> 時間をはかる（3分チャレンジはいつもはかります）</label>
           <label class="opt"><input type="checkbox" id="opt-listen"> 聞いて打つ（文字をかくす）</label>
           <label class="opt"><input type="checkbox" id="opt-bgm"> リラックスBGM <input type="range" id="opt-bgmv" min="1" max="10" step="1" value="4" aria-label="BGMの音の大きさ" style="width:90px;accent-color:var(--accent)"></label>
           <label class="opt"><input type="checkbox" id="opt-example"> 単語のあとに例文も打つ（単語モード）</label>
@@ -955,11 +991,11 @@ const LEVELS = [
 
 /* JIS keyboard, simplified to the keys these drills use */
 const ROWS = [
-  [["1","!"],["2","\""],["3","#"],["4","$"],["5","%"],["6","&"],["7","'"],["8","("],["9",")"],["0",""],["-","="]],
-  [["q"],["w"],["e"],["r"],["t"],["y"],["u"],["i"],["o"],["p"]],
-  [["a"],["s"],["d"],["f"],["g"],["h"],["j"],["k"],["l"],[";","+"],[":","*"]],
-  [["shiftL"],["z"],["x"],["c"],["v"],["b"],["n"],["m"],[",","<"],[".",">"],["/","?"],["shiftR"]],
-  [["space"]]
+  [["q"],["w"],["e"],["r"],["t"],["y"],["u"],["i"],["o"],["p"],["'"],["\""]],
+  [["a"],["s"],["d"],["f"],["g"],["h"],["j"],["k"],["l"],["-"],[";"],[":"]],
+  [["shiftL"],["z"],["x"],["c"],["v"],["b"],["n"],["m"],[","],["."],["shiftR"]],
+  [["?"],["space"],["!"]],
+  [["1"],["2"],["3"],["4"],["5"],["6"],["7"],["8"],["9"],["0"]]
 ];
 
 const $ = id => document.getElementById(id);
@@ -982,8 +1018,8 @@ const opts = {sound: saved.sound !== false, strict: !!saved.strict, vibe: saved.
   trans: pick(saved.trans, ["on","off"], "on"),
   kana: pick(saved.kana, ["off","card","all"], "card"),
   ipa: pick(saved.ipa, ["on","off"], "on"),
-  listen: !!saved.listen, example: !!saved.example, bgm: !!saved.bgm, bgmv: Math.min(10, Math.max(1, +saved.bgmv || 4)), goal: pick(String(saved.goal), ["3","5","10","15"], "5")};
-$("opt-pic").checked = opts.pic; $("opt-sound").checked = opts.sound; $("opt-strict").checked = opts.strict; $("opt-vibe").checked = opts.vibe; $("opt-listen").checked = opts.listen; $("opt-example").checked = opts.example; $("opt-bgm").checked = opts.bgm; $("opt-bgmv").value = opts.bgmv;
+  timing: saved.timing !== false, listen: !!saved.listen, example: !!saved.example, bgm: !!saved.bgm, bgmv: Math.min(10, Math.max(1, +saved.bgmv || 4)), goal: pick(String(saved.goal), ["3","5","10","15"], "5")};
+$("opt-timing").checked = opts.timing; $("opt-pic").checked = opts.pic; $("opt-sound").checked = opts.sound; $("opt-strict").checked = opts.strict; $("opt-vibe").checked = opts.vibe; $("opt-listen").checked = opts.listen; $("opt-example").checked = opts.example; $("opt-bgm").checked = opts.bgm; $("opt-bgmv").value = opts.bgmv;
 const canVibe = typeof navigator.vibrate === "function";
 $("opt-vibe-wrap").hidden = !canVibe;
 
@@ -1007,7 +1043,7 @@ function renderChips(){
     const b = document.createElement("button");
     b.type = "button"; b.className = "chip"; b.textContent = c.label; b.id = "chip-" + c.id;
     b.setAttribute("aria-pressed", String(st.cat === c.id));
-    b.addEventListener("click", () => { if (c.id === "review"){ startReview(); return; } st.cat = c.id; renderChips(); newRound(); refocus(); });
+    b.addEventListener("click", () => { if (c.id === "review"){ startReview(); return; } st.cat = c.id; saveLast(); renderChips(); newRound(); refocus(); });
     els.chips.appendChild(b);
   });
 }
@@ -1017,7 +1053,7 @@ function renderKeyboard(){
   els.kb.innerHTML = "";
   ROWS.forEach(row => {
     const r = document.createElement("div");
-    r.className = "row" + (row[0][0] === "space" ? " sp" : "");
+    r.className = "row" + (row[0][0] === "?" ? " sp" : row[0][0] === "1" ? " num" : "");
     row.forEach(([k, up]) => {
       const el = document.createElement("div");
       el.className = "key";
@@ -1063,7 +1099,9 @@ function applyDevice(){
   const dev = effDevice(), kb = effKb(), b = document.body;
   b.classList.toggle("compact", dev === "phone" || window.innerWidth < 600);
   ["off","guide","tap"].forEach(k => b.classList.toggle("kb-" + k, kb === k));
-  b.style.setProperty("--scale", String({s:.85, m:1, l:1.2}[opts.size]));
+  const land = dev === "phone" && window.innerWidth > window.innerHeight;
+  b.classList.toggle("phone-land", land);
+  b.style.setProperty("--scale", String({s:.85, m:1, l:1.2}[opts.size] * (land ? 1.25 : 1)));
   els.kb.classList.toggle("off", kb === "off");
   els.kb.setAttribute("aria-hidden", String(kb !== "tap"));
   if (kb === "tap") { try{ els.input.blur(); }catch(e){} }
@@ -1135,6 +1173,7 @@ const RIGHT = new Set("yuiophjklnm,./;:7890-".split(""));
 function keysFor(ch){
   if (ch === undefined) return [];
   if (ch === " ") return ["space"];
+  if (keyEls[ch]) return [ch];
   const shifted = {"!":"1","\"":"2","#":"3","$":"4","%":"5","&":"6","'":"7","(":"8",")":"9","=":"-","?":"/","<":",",">":".","+":";","*":":"};
   if (shifted[ch]) return [shifted[ch], RIGHT.has(shifted[ch]) ? "shiftL" : "shiftR"];
   if (/[A-Z]/.test(ch)){
@@ -1144,6 +1183,7 @@ function keysFor(ch){
   return [ch.toLowerCase()];
 }
 function updateKeyHint(){
+  { const cur = st.queue && st.queue[st.qi]; els.kb.classList.toggle("withnum", !!(cur && !st.done && /\d/.test(cur.en))); }
   Object.values(keyEls).forEach(el => el.classList.remove("next"));
   const sh = $("shifthint");
   if (st.done){ if (sh) sh.hidden = true; return; }
@@ -5746,6 +5786,7 @@ function setLevel(id){
   if (trackOf(id) !== "base"){ track = trackOf(id); store.set("g5type-track", track); } st.typingStory = null; st.story = null;
   stopSpeech();
   store.set("g5type-level", id);
+  saveLast();
   $("level-select").value = id;
   renderLadder(); applyLevel(); renderChips(); applyDevice(); showView();
   if (readingNow()) backToList(); else { newRound(); refocus(); }
@@ -5768,7 +5809,11 @@ function newRound(list, ch){
   { const lab = els.no.previousSibling; if (lab && lab.nodeType === 3) lab.textContent = ch ? "" : "No."; }
   els.result.hidden = true; els.play.hidden = false;
   els.hint.classList.remove("warn"); els.hint.textContent = hintText();
-  showItem(); updateStats();
+  applyTiming(); showItem(); updateStats();
+}
+function timingOn(){ return opts.timing || !!st.challenge; }
+function applyTiming(){
+  document.body.classList.toggle("notime", !timingOn());
 }
 
 /* ---------- word pictures (emoji) ---------- */
@@ -6257,12 +6302,13 @@ function finishRound(){
   const bestKey = "g5type-best-" + st.level + "-" + st.mode + (effKb() === "tap" ? "-touch" : "");
   const best = store.get(bestKey) || 0;
   let bestLine = best ? "自己ベスト " + best + " 打鍵/分" : "初めての記録です";
-  const nItems = st.results.length;
+  const nItems = st.results.length, tm = timingOn();
   if (st.challenge){
     const ck = "g5type-chbest-" + st.level + "-" + st.mode, cb = store.get(ck) || 0;
     bestLine = cb ? "チャレンジのベスト " + cb + "個" : "はじめてのチャレンジ";
     if (nItems > cb && acc >= 85){ store.set(ck, nItems); bestLine = cb ? "ベスト更新！（前回 " + cb + "個）" : "ベストを記録しました"; }
-  } else if (kpm > best && acc >= 85){ store.set(bestKey, kpm); bestLine = best ? "自己ベスト更新（前回 " + best + " 打鍵/分）" : "自己ベストを記録しました"; }
+  } else if (!tm){ bestLine = ""; }
+  else if (kpm > best && acc >= 85){ store.set(bestKey, kpm); bestLine = best ? "自己ベスト更新（前回 " + best + " 打鍵/分）" : "自己ベストを記録しました"; }
   const gain = nItems >= 3 ? (acc >= 98 ? 3 : acc >= 90 ? 2 : 1) : 0;
   if (gain){ stats.stars += gain; stats.rounds++; if (st.challenge) stats.ch++; saveStats(); }
   const newB = gain ? checkBadges({acc, items: nItems}) : [];
@@ -6279,7 +6325,7 @@ function finishRound(){
       <div class="owl-box">${owl(acc >= 95 ? "cheer" : acc >= 85 ? "happy" : "think")}<span class="owl-say">${acc >= 95 ? "すごい！ホーホー！" : acc >= 85 ? "よくできたね" : "つぎは もっとできるよ"}</span></div>
       <div class="stamp"><span>${stamp}</span></div>
       <div>
-        <h2>${st.challenge ? nItems + "個 打てました。" : st.queue.length + "問おわり。"}${kpm} 打鍵/分、正確さ ${acc.toFixed(1)}%</h2>
+        <h2>${st.challenge ? nItems + "個 打てました。" : st.queue.length + "問おわり。"}${tm ? kpm + " 打鍵/分、" : ""}正確さ ${acc.toFixed(1)}%</h2>
         <p class="best">${bestLine}</p>
         <p class="stars">${starLine}</p>
         ${praise.length ? `<ul class="praise">${praise.map(x => "<li>" + esc(x) + "</li>").join("")}</ul>` : ""}
@@ -6466,7 +6512,7 @@ $("vocab-box").addEventListener("click", e => {
 });
 
 function backToList(){
-  stopSpeech(); st.story = null; st.quiz = null;
+  stopSpeech(); st.story = null; st.quiz = null; saveLast();
   $("r-list-wrap").hidden = false; $("r-view").hidden = true;
   hideCard(); renderStoryList(); renderVocabBox();
 }
@@ -6474,6 +6520,7 @@ function openStory(id){
   const s = STORY_LIST.find(x => x.id === id);
   if (!s) return;
   st.story = s; st.quiz = null;
+  saveLast();
   $("r-list-wrap").hidden = true; $("r-view").hidden = false;
   $("r-body").hidden = false; $("r-quiz").hidden = true;
   hideCard(); renderStoryText();
@@ -6667,7 +6714,7 @@ function typeStory(d){
   if (!st.story) return;
   stopSpeech(); hideCard();
   st.dict = d === true;
-  st.typingStory = st.story;
+  st.typingStory = st.story; saveLast();
   showView(); newRound(); applyDevice(); refocus();
   window.scrollTo(0, 0);
 }
@@ -6748,6 +6795,7 @@ function showView(){
 }
 function setMode(m){
   st.mode = m; st.typingStory = null;
+  saveLast();
   stopSpeech();
   ["word","sentence","story"].forEach(k => $("mode-" + k).setAttribute("aria-pressed", String(m === k)));
   renderChips(); showView();
@@ -6859,6 +6907,7 @@ function applyTheme(){
   });
   applyTheme();
 })();
+$("opt-timing").addEventListener("change", e => { opts.timing = e.target.checked; saveOpts(); applyTiming(); refocus(); });
 $("opt-sound").addEventListener("change", e => { opts.sound = e.target.checked; saveOpts(); refocus(); });
 $("opt-example").addEventListener("change", e => { opts.example = e.target.checked; saveOpts(); refocus(); });
 $("opt-listen").addEventListener("change", e => { opts.listen = e.target.checked; saveOpts(); if (!st.done && st.queue && st.queue[st.qi]) showItem(); refocus(); });
@@ -7051,8 +7100,64 @@ let rz;
 window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(applyDevice, 80); });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawRules);
 
+/* ---------- start screen: pick a level or continue ---------- */
+function saveLast(){
+  try{ store.set("g5type-last", {lv:st.level, mode:st.mode, cat:st.cat, sid:(st.mode === "story" && st.story) ? st.story.id : null, ty:!!st.typingStory, t:Date.now()}); }catch(e){}
+}
+function startOpen(){ return !!document.getElementById("start"); }
+function startClose(){ const e = $("start"); if (e) e.remove(); try{ refocus(); }catch(err){} }
+function lastInfo(z){
+  const L = z && LEVELS.find(l => l.id === z.lv); if (!L) return null;
+  const m = z.mode === "sentence" ? L.sentLabel : z.mode === "story" ? "物語" : "単語";
+  let extra = "";
+  if (z.mode === "story" && z.sid){ const s = STORY_LIST.find(x => x.id === z.sid); if (s) extra = "：" + s.ja; }
+  const d = z.t ? new Date(z.t) : null;
+  return {L, text: L.label + "・" + m + extra, day: d && !isNaN(d) ? (d.getMonth() + 1) + "月" + d.getDate() + "日" : ""};
+}
+function resumeLast(z){
+  if (!z || !LEVELS.some(l => l.id === z.lv)) return;
+  if (z.lv !== st.level) setLevel(z.lv);
+  const m = z.mode === "sentence" || z.mode === "story" ? z.mode : "word";
+  setMode(m);
+  if (m === "story"){ if (z.sid && STORY_LIST.some(x => x.id === z.sid)) openStory(z.sid); }
+  else if (z.cat && z.cat !== st.cat && (z.cat === "all" || lvl().cats.some(c => c.id === z.cat))){ st.cat = z.cat; renderChips(); newRound(); }
+}
+function showStart(){
+  if (startOpen()) return;
+  const z = store.get("g5type-last"), info = lastInfo(z);
+  const e = document.createElement("div");
+  e.id = "start"; e.className = "start"; e.setAttribute("role", "dialog"); e.setAttribute("aria-modal", "true"); e.setAttribute("aria-label", "はじめる");
+  const grp = (title, ids) => ids.length ? '<div class="st-grp"><p class="st-gh">' + title + '</p><div class="st-grid">' + ids.map(id => {
+    const L = LEVELS.find(l => l.id === id);
+    return '<button type="button" class="st-lv' + (info && info.L.id === id ? " last" : "") + '" data-lv="' + id + '"><span class="t">' + esc(L.tag) + '</span><span class="n">' + esc(L.label) + '</span></button>';
+  }).join("") + "</div></div>" : "";
+  const ids = t => LEVELS.filter(l => trackOf(l.id) === t).map(l => l.id);
+  e.innerHTML = '<div class="start-card"><div class="st-head">' + owl("happy") + "<h2>ステップ英語タイピング</h2></div>" +
+    '<p class="st-sub">' + (info ? "前回のつづきから、またはレベルを選んではじめよう" : "レベルを選んではじめよう") + "</p>" +
+    (info ? '<button type="button" class="st-resume" id="st-resume"><span class="k">前回の続きから</span><span class="v">' + esc(info.text) + "</span>" +
+      (info.day ? '<span class="d">前回：' + info.day + "</span>" : "") + "</button>" : "") +
+    grp("入門", ids("base")) + grp("英検", ids("eiken")) + grp("IELTS", ids("ielts")) + "</div>";
+  e.addEventListener("click", ev => {
+    const r = ev.target.closest("#st-resume"), b = ev.target.closest(".st-lv");
+    if (!r && !b) return;
+    st.interacted = true;
+    if (r) resumeLast(z); else setLevel(b.dataset.lv);
+    startClose();
+  });
+  document.body.appendChild(e);
+  const f = $("st-resume") || e.querySelector(".st-lv.last") || e.querySelector(".st-lv");
+  try{ if (f) f.focus({preventScroll:true}); }catch(err){}
+}
+document.addEventListener("keydown", e => {
+  if (!startOpen() || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === "Escape"){ e.preventDefault(); e.stopImmediatePropagation(); startClose(); return; }
+  e.stopImmediatePropagation();
+  if (!(e.key === "Tab" || e.key === "Enter" || e.key === " " || e.key.indexOf("Arrow") === 0)) e.preventDefault();
+}, true);
+
 const savedLevel = store.get("g5type-level");
 st.level = LEVELS.some(l => l.id === savedLevel) ? savedLevel : "abc";
 renderLadder(); renderLevelSelect(); applyLevel(); renderChips(); renderKeyboard(); applyDevice(); newRound(); refocus();
+showStart();
 })();
 </script>
