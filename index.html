@@ -463,7 +463,8 @@ button:focus-visible,.opt input:focus-visible{outline:2px solid var(--accent);ou
 .panels summary::before{display:none}
 .panels .s-now{display:none}
 .panels .gear{width:22px;height:22px}
-.lvt{margin-left:4px;font-family:var(--f-num);font-weight:700;font-size:14px;letter-spacing:.02em;line-height:1}
+#lvbox .s-title{position:relative;display:inline-block;line-height:0}
+.lvt{position:absolute;left:1px;top:1px;margin:0;font-family:var(--f-num);font-weight:700;font-size:9px;letter-spacing:0;line-height:1;pointer-events:none}
 .panels .s-body{grid-template-columns:minmax(0,1fr);overflow-x:hidden;position:absolute;top:calc(100% + 6px);right:0;z-index:30;width:min(440px,calc(100vw - 32px));box-sizing:border-box;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
 .settings{background:var(--paper);border:1px solid var(--line);border-radius:10px}
 .settings summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center;padding:5px 12px;font-weight:700;font-size:13px}
