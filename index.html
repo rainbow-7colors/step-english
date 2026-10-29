@@ -6426,14 +6426,28 @@ function speak(text, force, rate){
   try{
     if (!window.speechSynthesis) return;
     playTok++;
-    speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "en-US"; u.rate = rate || 0.85;
     if (voice) u.voice = voice;
-    speechSynthesis.speak(u);
+    /* スマホは、タップの直後に speak しないと音が出ないことがある。読み上げ中でないときは cancel せず、すぐ話す */
+    if (speechSynthesis.speaking || speechSynthesis.pending){
+      speechSynthesis.cancel();
+      setTimeout(() => { try{ speechSynthesis.speak(u); }catch(e){} }, 80);
+    } else speechSynthesis.speak(u);
   }catch(e){}
 }
 
+
+/* スマホの読み上げ解除：最初のタップで、音の出ない短い読み上げを1回だけ行う */
+(function(){
+  let done = false;
+  const go = () => {
+    if (done) return; done = true;
+    document.removeEventListener("pointerdown", go, true);
+    try{ if (window.speechSynthesis){ const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } }catch(e){}
+  };
+  document.addEventListener("pointerdown", go, true);
+})();
 /* ---------- story reader ---------- */
 let playTok = 0, chainOn = false;
 
@@ -6985,11 +6999,13 @@ function lqShow(){
   const z = st.lq, q = z.qs[z.i];
   z.picked = -1;
   els.result.innerHTML = '<div class="lq"><div class="lq-head"><span class="label">聞き取りクイズ</span><span class="lq-no">' + (z.i + 1) + " / " + z.qs.length + '</span></div>' +
-    '<div class="lq-say"><button type="button" class="btn" id="lq-play" aria-label="もう一度聞く">♪ 聞く</button><span class="r-tip" style="margin:0">聞こえた単語の意味を、えらんでね</span></div>' +
+    '<div class="lq-say"><button type="button" class="btn" id="lq-play" aria-label="もう一度聞く">♪ 聞く</button><span class="r-tip" style="margin:0">聞こえた単語の意味を、えらんでね</span></div>'+
+    '<p class="r-tip" style="margin:0 0 8px">音が出ないときは、「♪ 聞く」をもう一度おして、端末の音量とマナーモードも見てね。</p>' +
+    '' +
     '<div class="lq-ch">' + q.ch.map((c, k) => '<button type="button" class="lq-opt" data-k="' + k + '"><kbd>' + (k + 1) + "</kbd>" + esc(c) + "</button>").join("") + '</div>' +
     '<div class="lq-fb" id="lq-fb" aria-live="polite"></div></div>';
   $("lq-play").addEventListener("click", lqSay);
-  setTimeout(lqSay, 250);
+  lqSay();
 }
 function lqPick(k){
   const z = st.lq; if (!z || z.picked >= 0) return;
