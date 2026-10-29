@@ -315,6 +315,7 @@ button:focus-visible,.opt input:focus-visible{outline:2px solid var(--accent);ou
 #typein{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px}
 
 /* results */
+[hidden]{display:none !important}
 .result{display:grid;gap:18px;padding-top:18px}
 .result-top{display:flex;flex-wrap:wrap;gap:20px 28px;align-items:center}
 .stamp{flex:none;width:118px;height:118px;border-radius:50%;border:3px double var(--red);color:var(--red);display:grid;place-items:center;text-align:center;font-weight:700;font-size:15px;line-height:1.3;transform:rotate(-12deg);animation:stamp .35s ease-out}
@@ -6994,13 +6995,23 @@ function lqStart(){
   els.play.hidden = true; els.result.hidden = false;
   lqShow(); window.scrollTo(0, 0);
 }
-function lqSay(){ const q = st.lq && st.lq.qs[st.lq.i]; if (q) speak(q.say || q.en, true); }
+function lqSay(){
+  const q = st.lq && st.lq.qs[st.lq.i]; if (!q) return;
+  speak(q.say || q.en, true);
+  const n = $("lq-note");
+  if (n){
+    try{
+      if (!window.speechSynthesis) n.textContent = "このブラウザは、読み上げに対応していません。別のブラウザ（ChromeやSafari）で開いてください。";
+      else if (!speechSynthesis.getVoices().length) n.textContent = "英語の声がまだ見つかりません。少し待ってからもう一度おすか、端末の設定で英語の音声を入れてください。";
+    }catch(e){}
+  }
+}
 function lqShow(){
   const z = st.lq, q = z.qs[z.i];
   z.picked = -1;
   els.result.innerHTML = '<div class="lq"><div class="lq-head"><span class="label">聞き取りクイズ</span><span class="lq-no">' + (z.i + 1) + " / " + z.qs.length + '</span></div>' +
     '<div class="lq-say"><button type="button" class="btn" id="lq-play" aria-label="もう一度聞く">♪ 聞く</button><span class="r-tip" style="margin:0">聞こえた単語の意味を、えらんでね</span></div>'+
-    '<p class="r-tip" style="margin:0 0 8px">音が出ないときは、「♪ 聞く」をもう一度おして、端末の音量とマナーモードも見てね。</p>' +
+    '<p class="r-tip" id="lq-note" style="margin:0 0 8px">音が出ないときは、「♪ 聞く」をもう一度おして、端末の音量とマナーモードも見てね。</p>' +
     '' +
     '<div class="lq-ch">' + q.ch.map((c, k) => '<button type="button" class="lq-opt" data-k="' + k + '"><kbd>' + (k + 1) + "</kbd>" + esc(c) + "</button>").join("") + '</div>' +
     '<div class="lq-fb" id="lq-fb" aria-live="polite"></div></div>';
