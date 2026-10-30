@@ -234,6 +234,17 @@ button:focus-visible,.opt input:focus-visible{outline:2px solid var(--accent);ou
 .st-lv .n{font-weight:800;font-size:14px}
 .st-lv.last{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
 .st-lv:hover{border-color:var(--accent)}
+.st-who{margin:0;font-weight:800;font-size:clamp(16px,2.6vw,20px);text-align:center;color:var(--accent)}
+.st-name-in{width:min(320px,100%);box-sizing:border-box;font:inherit;font-size:20px;text-align:center;padding:12px 16px;border:2px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink)}
+.st-name-in:focus{outline:none;border-color:var(--accent)}
+.st-big{font:inherit;font-weight:800;font-size:17px;padding:12px 28px;border-radius:999px;border:0;background:var(--ink);color:var(--paper);cursor:pointer}
+.st-link{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:6px 10px}
+.st-plist{display:grid;gap:8px;width:min(420px,100%)}
+.st-prow{display:flex;gap:8px;align-items:stretch}
+.st-prow .st-lv{flex:1;grid-auto-flow:column;justify-content:start;padding:12px 18px;font-size:18px}
+.st-prow .st-lv .n{font-size:18px}
+.st-del{flex:none;font:inherit;font-size:12px;padding:0 12px;border-radius:14px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
+.st-msg{margin:0;font-size:12px;color:var(--muted);text-align:center}
 .st-head{display:flex;align-items:center;justify-content:center;gap:14px}
 .st-head .owl{flex:none}
 @media (max-height:640px){.start-card .owl{width:64px;height:64px}.start-card{gap:10px}.start-card h2{font-size:20px}}
@@ -696,6 +707,7 @@ body.phone-land .stat .label{font-size:12px}
   <details class="settings" id="log">
     <summary><span class="s-title" title="練習の記録"><svg class="gear" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 20.5H6.5a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v4"/><path d="M8 8.5h6M8 12h3.5"/><path d="m13.5 20.5.6-3 6-6a1.6 1.6 0 0 1 2.3 2.3l-6 6z"/></svg><span class="vh">練習の記録</span></span><span class="s-now" id="log-now"></span></summary>
     <div class="s-body">
+      <p class="log-sub" id="log-who"></p>
       <div class="log-sums">
         <div class="stat"><span class="label">きょう</span><span class="v" id="log-today">0秒</span></div>
         <div class="stat"><span class="label">この7日間</span><span class="v" id="log-week">0秒</span></div>
@@ -1026,9 +1038,18 @@ const $ = id => document.getElementById(id);
 const els = {line:$("line"), ja:$("ja"), pic:$("pic"), hint:$("hint"), dots:$("dots"), no:$("no"), play:$("play"), result:$("result"),
   time:$("s-time"), kpm:$("s-kpm"), acc:$("s-acc"), miss:$("s-miss"), kb:$("kb"), input:$("typein"), chips:$("chips")};
 
+/* ---------- users: each nickname keeps its own records (localStorage, per-user key prefix) ---------- */
+const PROFILES_KEY = "g5type-profiles", WHO_KEY = "g5type-who", GLOBAL_KEYS = ["g5type-opts", "g5type-profiles", "g5type-who"];
+function rawGet(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+let profiles = rawGet(PROFILES_KEY);
+if (!Array.isArray(profiles)) profiles = [];
+profiles = profiles.filter(p => p && typeof p.id === "string" && typeof p.name === "string");
+let who = rawGet(WHO_KEY);
+if (!profiles.some(p => p.id === who)) who = "";
+const userKey = k => (who && GLOBAL_KEYS.indexOf(k) < 0) ? k.replace(/^g5type-/, "g5type-u" + who + "-") : k;
 const store = {
-  get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
-  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  get(k){ try{ return JSON.parse(localStorage.getItem(userKey(k))); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(userKey(k), JSON.stringify(v)); }catch(e){} }
 };
 const saved = store.get("g5type-opts") || {};
 const pick = (v, list, d) => list.includes(v) ? v : d;
@@ -6288,6 +6309,7 @@ $("log-reset").addEventListener("click", () => {
   timeLog = {}; logDirty = false; store.set(TIME_KEY, timeLog); renderLog();
 });
 renderLog();
+{ const lw = $("log-who"); if (lw) lw.textContent = who ? whoName() + "さんの記録" : ""; }
 
 function handleChar(ch){
   if (st.done || st.lock) return;
@@ -7201,35 +7223,126 @@ function resumeLast(z){
   if (m === "story"){ if (z.sid && STORY_LIST.some(x => x.id === z.sid)) openStory(z.sid); }
   else if (z.cat && z.cat !== st.cat && (z.cat === "all" || lvl().cats.some(c => c.id === z.cat))){ st.cat = z.cat; renderChips(); newRound(); }
 }
-function showStart(){
-  if (startOpen()) return;
-  const z = store.get("g5type-last"), info = lastInfo(z);
+function saveProfiles(){ try{ localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles)); }catch(e){} }
+function setWho(id){
+  try{
+    if (id) localStorage.setItem(WHO_KEY, JSON.stringify(id)); else localStorage.removeItem(WHO_KEY);
+    if (rawGet(WHO_KEY) === (id || null)){ location.reload(); return true; }
+  }catch(e){}
+  return false;
+}
+function createProfile(name){
+  name = String(name || "").replace(/\s+/g, " ").trim().slice(0, 12);
+  if (!name) return false;
+  const id = Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
+  if (!profiles.length){
+    /* はじめてのニックネームには、この端末にすでにある記録を引きつぐ */
+    try{
+      const ks = [];
+      for (let i = 0; i < localStorage.length; i++){
+        const k = localStorage.key(i);
+        if (k && k.indexOf("g5type-") === 0 && k.indexOf("g5type-u") !== 0 && GLOBAL_KEYS.indexOf(k) < 0) ks.push(k);
+      }
+      ks.forEach(k => localStorage.setItem(k.replace(/^g5type-/, "g5type-u" + id + "-"), localStorage.getItem(k)));
+    }catch(e){}
+  }
+  profiles.push({id, name}); saveProfiles();
+  if (!setWho(id)){ who = id; return "memory"; }
+  return true;
+}
+function deleteProfile(id){
+  try{
+    const pre = "g5type-u" + id + "-", ks = [];
+    for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (k && k.indexOf(pre) === 0) ks.push(k); }
+    ks.forEach(k => localStorage.removeItem(k));
+  }catch(e){}
+  profiles = profiles.filter(p => p.id !== id); saveProfiles();
+  if (id === who){ if (!setWho("")) who = ""; }
+}
+function whoName(){ const p = profiles.find(x => x.id === who); return p ? p.name : ""; }
+function showStart(mode){
+  const old = $("start"); if (old) old.remove();
+  mode = mode || (who ? "main" : profiles.length ? "pick" : "name");
+  const z = who ? store.get("g5type-last") : null, info = lastInfo(z);
   const e = document.createElement("div");
   e.id = "start"; e.className = "start"; e.setAttribute("role", "dialog"); e.setAttribute("aria-modal", "true"); e.setAttribute("aria-label", "はじめる");
+  const head = sub => '<div class="st-head">' + owl("happy") + "<h2>ステップ英語タイピング</h2></div>" + (sub ? '<p class="st-sub">' + sub + "</p>" : "");
   const grp = (title, ids) => ids.length ? '<div class="st-grp"><p class="st-gh">' + title + '</p><div class="st-grid">' + ids.map(id => {
     const L = LEVELS.find(l => l.id === id);
     return '<button type="button" class="st-lv' + (info && info.L.id === id ? " last" : "") + '" data-lv="' + id + '"><span class="t">' + esc(L.tag) + '</span><span class="n">' + esc(L.label) + '</span></button>';
   }).join("") + "</div></div>" : "";
   const ids = t => LEVELS.filter(l => trackOf(l.id) === t).map(l => l.id);
-  e.innerHTML = '<div class="start-card"><div class="st-head">' + owl("happy") + "<h2>ステップ英語タイピング</h2></div>" +
-    '<p class="st-sub">' + (info ? "前回のつづきから、またはレベルを選んではじめよう" : "レベルを選んではじめよう") + "</p>" +
-    (info ? '<button type="button" class="st-resume" id="st-resume"><span class="k">前回の続きから</span><span class="v">' + esc(info.text) + "</span>" +
-      (info.day ? '<span class="d">前回：' + info.day + "</span>" : "") + "</button>" : "") +
-    grp("入門", ids("base")) + grp("英検", ids("eiken")) + grp("IELTS", ids("ielts")) + "</div>";
+  let html;
+  if (mode === "name"){
+    html = head("はじめまして！ニックネームを おしえてね") +
+      '<input type="text" id="st-name" class="st-name-in" maxlength="12" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ニックネーム" aria-label="ニックネーム">' +
+      '<button type="button" class="st-big" data-act="create">はじめる</button>' +
+      '<p class="st-msg" id="st-msg">記録は、このニックネームごとに、この端末の中に残ります。本名でなくてもだいじょうぶです。</p>' +
+      (profiles.length ? '<button type="button" class="st-link" data-act="pick">もどる</button>' : "");
+  } else if (mode === "pick"){
+    html = head("だれが つかう？") + '<div class="st-plist">' + profiles.map(p =>
+      '<div class="st-prow"><button type="button" class="st-lv' + (p.id === who ? " last" : "") + '" data-act="who" data-pid="' + p.id + '"><span class="n">' + esc(p.name) + '</span></button>' +
+      '<button type="button" class="st-del" data-act="del" data-pid="' + p.id + '">けす</button></div>').join("") + "</div>" +
+      '<button type="button" class="st-big" data-act="new">あたらしい ニックネーム</button>' +
+      '<p class="st-msg" id="st-msg"></p>' +
+      (who ? '<button type="button" class="st-link" data-act="back">もどる</button>' : "");
+  } else {
+    html = head(info ? "前回のつづきから、またはレベルを選んではじめよう" : "レベルを選んではじめよう") +
+      '<p class="st-who">' + esc(whoName()) + 'さん、こんにちは！</p>' +
+      (info ? '<button type="button" class="st-resume" id="st-resume"><span class="k">前回の続きから</span><span class="v">' + esc(info.text) + "</span>" +
+        (info.day ? '<span class="d">前回：' + info.day + "</span>" : "") + "</button>" : "") +
+      grp("入門", ids("base")) + grp("英検", ids("eiken")) + grp("IELTS", ids("ielts")) +
+      '<button type="button" class="st-link" data-act="pick">ユーザーをかえる</button>';
+  }
+  e.innerHTML = '<div class="start-card">' + html + "</div>";
+  let delArm = "", delT = 0;
   e.addEventListener("click", ev => {
-    const r = ev.target.closest("#st-resume"), b = ev.target.closest(".st-lv");
+    const a = ev.target.closest("[data-act]");
+    if (a){
+      const act = a.dataset.act, pid = a.dataset.pid;
+      if (act === "pick" || act === "new" && false){ showStart("pick"); return; }
+      if (act === "new"){ showStart("name"); return; }
+      if (act === "back"){ showStart("main"); return; }
+      if (act === "create"){ doCreate(); return; }
+      if (act === "who"){ if (pid === who){ showStart("main"); return; } if (!setWho(pid)){ who = pid; showStart("main"); } return; }
+      if (act === "del"){
+        if (delArm !== pid){
+          delArm = pid; clearTimeout(delT); delT = setTimeout(() => { delArm = ""; a.textContent = "けす"; }, 4000);
+          a.textContent = "もう一度おすと、記録ごと消えます";
+          return;
+        }
+        deleteProfile(pid);
+        if (!document.getElementById("start")) return;
+        showStart(profiles.length ? "pick" : "name");
+        return;
+      }
+      return;
+    }
+    const r = ev.target.closest("#st-resume"), b = ev.target.closest(".st-lv[data-lv]");
     if (!r && !b) return;
     st.interacted = true;
     if (r) resumeLast(z); else setLevel(b.dataset.lv);
     startClose();
   });
+  function doCreate(){
+    const inp = $("st-name"), r = createProfile(inp ? inp.value : "");
+    if (r === false){ const m = $("st-msg"); if (m) m.textContent = "ニックネームを入れてね"; if (inp) inp.focus(); }
+    else if (r === "memory") showStart("main");
+  }
   document.body.appendChild(e);
-  const f = $("st-resume") || e.querySelector(".st-lv.last") || e.querySelector(".st-lv");
-  try{ if (f) f.focus({preventScroll:true}); }catch(err){}
+  const ni = $("st-name");
+  if (ni){
+    ni.addEventListener("keydown", ev => { ev.stopPropagation(); if (ev.key === "Enter"){ ev.preventDefault(); doCreate(); } });
+    try{ ni.focus({preventScroll:true}); }catch(err){}
+  } else {
+    const f = $("st-resume") || e.querySelector(".st-lv.last") || e.querySelector(".st-lv");
+    try{ if (f) f.focus({preventScroll:true}); }catch(err){}
+  }
 }
 document.addEventListener("keydown", e => {
   if (!startOpen() || e.ctrlKey || e.metaKey || e.altKey) return;
-  if (e.key === "Escape"){ e.preventDefault(); e.stopImmediatePropagation(); startClose(); return; }
+  if (e.target && e.target.id === "st-name") return;
+  if (e.key === "Escape"){ e.preventDefault(); e.stopImmediatePropagation(); if (who) startClose(); return; }
   e.stopImmediatePropagation();
   if (!(e.key === "Tab" || e.key === "Enter" || e.key === " " || e.key.indexOf("Arrow") === 0)) e.preventDefault();
 }, true);
