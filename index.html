@@ -6670,7 +6670,7 @@ function stopSpeech(){
   try{ if (window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
   markPlaying(-1); setPlayBtn(false);
 }
-function playSents(i, chain){
+function playSents(i, chain, withTitle){
   if (!window.speechSynthesis || !st.story) return;
   const s = st.story, tok = ++playTok;
   try{ speechSynthesis.cancel(); }catch(e){}
@@ -6678,7 +6678,7 @@ function playSents(i, chain){
     if (tok !== playTok) return;
     if (idx >= s.sents.length){ markPlaying(-1); setPlayBtn(false); return; }
     markPlaying(idx); setPlayBtn(chain);
-    const u = new SpeechSynthesisUtterance(s.sents[idx].en);
+    const u = new SpeechSynthesisUtterance(idx < 0 ? s.t : s.sents[idx].en);
     u.lang = "en-US"; u.rate = rateVal();
     if (voice) u.voice = voice;
     u.onend = () => {
@@ -6689,11 +6689,11 @@ function playSents(i, chain){
     u.onerror = () => { if (tok === playTok){ markPlaying(-1); setPlayBtn(false); } };
     try{ speechSynthesis.speak(u); }catch(e){ markPlaying(-1); setPlayBtn(false); }
   };
-  setTimeout(() => run(i), 60);
+  setTimeout(() => run(withTitle && s.t ? -1 : i), 60);
 }
 $("r-play").addEventListener("click", () => {
   st.interacted = true;
-  if (chainOn) stopSpeech(); else playSents(0, true);
+  if (chainOn) stopSpeech(); else playSents(0, true, true);
 });
 $("r-back").addEventListener("click", backToList);
 
